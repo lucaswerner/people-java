@@ -1,5 +1,6 @@
-package br.com.santander.people;
+package br.com.people.controllers;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,45 +17,45 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import br.com.people.enitities.Person;
+import br.com.people.repositories.PersonRepository;
+import br.com.people.services.PersonService;
+
 @Controller
 @CrossOrigin 
 @RequestMapping(path="/people")
 public class MainController {
 	
 	@Autowired
-	private PersonRepository personRepository;
+	private PersonService personService;
 	
 	@GetMapping
-	public @ResponseBody Iterable<Person> getAllPersons() {
-		return personRepository.findAll();
+	public @ResponseBody ResponseEntity<List<Person>> getAllPersons() {
+		return ResponseEntity.status(HttpStatus.OK).body(personService.listPersons());
 	}
 	
 	@GetMapping("/{id}")
-	public @ResponseBody Optional<Person> getPerson(@PathVariable("id") long id) {
-		return personRepository.findById(id);
+	public @ResponseBody ResponseEntity<Person> getPerson(@PathVariable("id") long id) {
+		return ResponseEntity.status(HttpStatus.OK).body(personService.getPerson(id));
 	}
 
 	@PostMapping
-	public @ResponseBody Person addNewPerson (@RequestBody Person person) {
-		return personRepository.save(person);
+	public @ResponseBody ResponseEntity<Person> addNewPerson (@RequestBody Person person) {
+		return ResponseEntity.status(HttpStatus.CREATED).body(personService.savePerson(person));
 	}
 	
 	@PutMapping
 	public @ResponseBody ResponseEntity<Person> updatePerson (@RequestBody Person person) {
-		if (personRepository.existsById(person.getId())) {
-			return ResponseEntity.status(HttpStatus.OK).body(personRepository.save(person));
-		}
-		
-		return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
+		Person updatedPerson = personService.updatePerson(person);
+		return ResponseEntity
+				.status(updatedPerson == null ? HttpStatus.NOT_ACCEPTABLE : HttpStatus.OK)
+				.body(updatedPerson);
 	}
 	
 	@DeleteMapping("/{id}")
 	public @ResponseBody ResponseEntity<Person> deletePerson (@PathVariable("id") long id) {
-		if (personRepository.existsById(id)) {
-			personRepository.deleteById(id);
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-		}
-		
-		return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
+		return ResponseEntity
+				.status(personService.deletePerson(id) ? HttpStatus.NO_CONTENT : HttpStatus.NOT_ACCEPTABLE)
+				.body(null);
 	}
 }

@@ -1,4 +1,4 @@
-package br.com.santander.people;
+package br.com.people;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
