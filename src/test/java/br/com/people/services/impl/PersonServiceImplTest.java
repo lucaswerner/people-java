@@ -29,9 +29,9 @@ public class PersonServiceImplTest {
 	
 	@Before
 	public void setup() {
-		persons.add(new Person(0, "Fernando", "Silva"));
-		persons.add(new Person(0, "Roial", "Serelepe"));
-		persons.add(new Person(0, "Kleber", "Machado"));
+//		persons.add(new Person(0, "Fernando", "Silva"));
+//		persons.add(new Person(0, "Roial", "Serelepe"));
+//		persons.add(new Person(0, "Kleber", "Machado"));
 	}
 	
 	@Test
